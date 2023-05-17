@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Labeling emotions</title>
+    <script type="module" src="popup.js"></script>
+    <link rel="stylesheet" href="popup.css" type="text/css"/>
+  </head>
+  <body>
+    <div class="bg" id="bg">
+      <div class="container" id="container">
+        <div class="logging" id="logging">
+          <input type="text" placeholder="username" class="loginInput" id="loginInput">
+          <button class="loginButton" id="loginButton">Save</button>
+        </div>
+        
+        <div class="labeling" id="labeling" hidden>
+          <table class="contentTable" id="contentTable">
+            <thead>
+              <tr>
+                <th>Start time [s]</th>
+                <th>End time [s]</th>
+                <th>Emotion</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody class="content" id="content">
+              <tr class="emptyTr" id="emptyTr">
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <button type="submit" class="saveButton" id="saveButton">Submit</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

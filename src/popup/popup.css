@@ -1,0 +1,80 @@
+.container {
+  width: 512px;
+  height: 256px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.loginInput {
+  display: block;
+  width: 70%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+  float: left;
+}
+
+.container button {
+  display: block;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  float: left;
+  width: 28%;
+  margin-left: 2%;
+  background-color: #6c7a89;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.container button:active {
+  background-color: #4e5d6c;
+}
+
+.contentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.contentTable th,
+.contentTable td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+  /*display: inline-block;*/
+}
+
+.contentTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.contentTable input {
+  margin-right: 18px;
+  width: 72%;
+}
+
+.contentTable img {
+  width: 18px;
+  height: 18px;
+  float: right;
+  vertical-align: middle;
+}
+
+.container button[type="submit"] {
+  margin-top: 20px;
+  width: 100%;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

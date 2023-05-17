@@ -1,0 +1,37 @@
+{
+  "name": "Labeling emotions",
+  "version": "1.0.6",
+  "manifest_version": 3,
+  "description": "Labeling emotions in YouTube videos",
+  "default_locale": "en",
+  "icons": {
+    "16": "resources/icons/icon16.png",
+	  "32": "resources/icons/icon32.png",
+	  "48": "resources/icons/icon48.png",
+	  "128": "resources/icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Labeling emotions",
+    "default_popup": "./src/popup/popup.html"
+  },
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": ["https://*.youtube.com/*"],
+  "background": {
+    "service_worker": "./src/js/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/delete.png",
+        "assets/sync.png"
+      ],
+      "matches": ["https://*.youtube.com/*"]
+    }
+  ],
+  "content_scripts": [{
+    "matches": ["https://*.youtube.com/*"],
+    "js": [
+      "./src/inject/inject.js"
+    ]
+  }]
+}
