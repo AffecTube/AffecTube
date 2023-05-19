@@ -1,7 +1,7 @@
 class DataUploader {
   constructor() {
     this.urlApi = "https://api.github.com/repos/danielkulas/LabelingEmotionsDatabase/contents/";
-    this.token = "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";
+    this.token = "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";
   }
 
   uploadData(data, onUploaded) {
