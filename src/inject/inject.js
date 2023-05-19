@@ -1,22 +1,18 @@
 class DataUploader {
   constructor() {
-    this.urlApi = "https://api.github.com/repos/danielkulas/LabelingEmotionsDatabase/contents/";
-    this.token = "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";
+    this.urlApi = "https://labelling-api.affectivese.org/LabelingEmotionsDatabase/";
   }
 
   uploadData(data, onUploaded) {
     return fetch(
       this.urlApi + crypto.randomUUID().toString() + ".json",
       {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: "Bearer " + this.token
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          message: "Data uploaded from API",
-          content: data
-        })
+        body: JSON.stringify(data)
       }
     ).then((res) => {
       console.log("Upload status: " + res.statusText);
@@ -25,6 +21,7 @@ class DataUploader {
     });
   }
 }
+
 
 class PlayerManager {
   constructor() {
@@ -157,7 +154,7 @@ class ChromeStorageManager {
     const url = {"videoURL" : videoURL}
     const merged = {...url, ...nickname, ...labels}
 
-    dataUploader.uploadData(btoa(JSON.stringify(merged)), () => chrome.storage.sync.remove([videoURL]));
+    dataUploader.uploadData(JSON.stringify(merged), () => chrome.storage.sync.remove([videoURL]));
   }
 
   function initialize(newVideoURL) {
