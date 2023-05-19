@@ -1,6 +1,6 @@
 {
   "name": "Labeling emotions",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "manifest_version": 3,
   "description": "Labeling emotions in YouTube videos",
   "default_locale": "en",
