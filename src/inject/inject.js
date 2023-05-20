@@ -30,18 +30,7 @@ class PlayerManager {
   }
 
   getVideoPlayer() {
-    var videoPlayers = document.getElementsByClassName(this.videoClassName);
-    var videoPlayer;
-
-    for (let i = 0; i < videoPlayers.length; i++) {
-      let thisVideoRect = videoPlayers[i].getBoundingClientRect();
-      if (thisVideoRect.width != 0 && thisVideoRect.height != 0) {
-        videoPlayer = videoPlayers[i];
-        break;
-      }
-    }
-
-    return videoPlayer;
+    return document.getElementsByClassName(this.videoClassName)[0];
   }
 
   getEmotionsContainer() {
