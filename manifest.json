@@ -14,7 +14,7 @@
     "default_title": "Labeling emotions",
     "default_popup": "./src/popup/popup.html"
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "webNavigation"],
   "host_permissions": ["https://*.youtube.com/*"],
   "background": {
     "service_worker": "./src/js/background.js"
