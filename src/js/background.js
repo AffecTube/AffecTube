@@ -1,15 +1,24 @@
+function sendInitMessage(url, tabId){
+  if (url && url.includes("watch?v")) {
+    const queryParameters = url.split("?")[1];
+    const urlParameters = new URLSearchParams(queryParameters);
+    const urlParameterVideo = urlParameters.get("v");
+    
+    chrome.tabs.sendMessage(tabId, {
+      type: "init",
+      videoURL: urlParameterVideo,
+    });
+  }
+}
+
+/* Launched by entering a direct URL */
+chrome.tabs.onUpdated.addListener((tabId, tab) => {
+  sendInitMessage(tab.url, tabId);
+});
+
+/* Launched when reloading a YouTube video page or navigating on the YouTube site. */
 chrome.webNavigation.onCompleted.addListener((details) => {
-  console.log("HIST")
   chrome.tabs.get(details.tabId, function(tab) {
-    if (tab.url && tab.url.includes("watch?v")) {
-      const queryParameters = tab.url.split("?")[1];
-      const urlParameters = new URLSearchParams(queryParameters);
-      const urlParameterVideo = urlParameters.get("v");
-      
-      chrome.tabs.sendMessage(details.tabId, {
-        type: "init",
-        videoURL: urlParameterVideo,
-      });
-    }
+    sendInitMessage(tab.url, details.tabId);
   });
 });
