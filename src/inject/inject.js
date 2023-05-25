@@ -188,10 +188,10 @@ class ChromeStorageManager {
 
       for (let i = 0; i < buttonsToStyle.length; i++) {
         var button = buttonsToStyle[i];
-        button.style.backgroundColor = "#6c7a89";
+        button.style.backgroundColor = "#5c5a59";
         button.style.border = "none";
         button.style.color = "white";
-        button.style.padding = "10px 20px";
+        button.style.padding = "10px 10px";
         button.style.textAlign = "center";
         button.style.textDecoration = "none";
         button.style.display = "inline-block";
