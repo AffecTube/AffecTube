@@ -1,6 +1,6 @@
 {
-  "name": "Labeling emotions",
-  "version": "1.1.1",
+  "name": "AffecTube",
+  "version": "1.1.2",
   "manifest_version": 3,
   "description": "Labeling emotions in YouTube videos",
   "default_locale": "en",
@@ -11,7 +11,7 @@
 	  "128": "resources/icons/icon128.png"
   },
   "action": {
-    "default_title": "Labeling emotions",
+    "default_title": "AffecTube",
     "default_popup": "./src/popup/popup.html"
   },
   "permissions": ["storage", "activeTab", "scripting", "tabs", "webNavigation"],
