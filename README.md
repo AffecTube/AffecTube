@@ -3,14 +3,27 @@ _AffectTube_ is an extension for the Chrome web browser that enables annotating 
 
 ![image](https://github.com/AffecTube/AffecTube/assets/2039195/f745568e-837f-4234-a18d-d42f3995da62)
 
-The extension is distributed to annotators in source code form. Before uploading the archive, modifications must be made to the source code, i.e. defining the StorageAPI address and the list of labels. 
+## Configuration
 
-Both changes are made in the `src/inject/inject.js` file. The StorageAPI address should be in the 3rd line:
+The extension is distributed to annotators in source code form. Before sharing the archive with annotators, modifications to the source code must be made, i.e., defining the server to which the annotated date will be sent and the list of labels. 
+
+Both changes are made in the `src/inject/inject.js` file. 
+
+### StorageAPI
+
+If you want to use the on-premises [StorageAPI](https://github.com/AffecTube/StorageAPI), its address and optional port number should be entered in the 3rd line:
 ```js
-    this.urlApi = "https://labelling-api.affectivese.org/LabelingEmotionsDatabase/";
+    this.urlApi = "http[s]://ADDRESS[:PORT]/LabelingEmotionsDatabase/";
 ```
 
-On the other hand, the list of available labels is defined on line 90:
+### GitHub storage
+
+If you are using GitHub to receive data from an extension, you should place the appropriate data in the constructor of the `DataUploaderGithub` class (line 34). You should provide the address of the server and the tokens that were generated in the GitHub repository. More informaction about GitHub API can be found in [documentation](https://docs.github.com/en/rest/overview/about-githubs-apis).
+
+It is also necessary to change the `dataUploader` in line 144 from `DataUploaderAPI` to `DataUploaderGithub`.
+
+### Labels definition
+The list of available labels is defined on line 137. They are customizable and can be tailored to the needs of the study in question.
 ```js
   let emotions = ["happiness", "sadness", "disgust", "fear", "surprise", "anger", "confusion"];
 ```
