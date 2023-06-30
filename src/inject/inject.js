@@ -1,4 +1,4 @@
-class DataUploader {
+class DataUploaderAPI {
   constructor() {
     this.urlApi = "https://labelling-api.affectivese.org/LabelingEmotionsDatabase/";
   }
@@ -13,6 +13,44 @@ class DataUploader {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
+      }
+    ).then((res) => {
+      console.log("Upload status: " + res.statusText);
+      if (res.ok) {
+        onSuccess.forEach((onSuccessCallback) => {
+          onSuccessCallback();
+        });
+      }
+      else
+      {
+        onFailure.forEach((onFailureCallback) => {
+          onFailureCallback();
+        });
+      }
+    });
+  }
+}
+
+class DataUploaderGithub {
+  constructor() {
+    this.urlApi = "https://api.github.com/repos/danielkulas/LabelingEmotionsDatabase/contents/";
+    this.token1 = "11AJOQWMQ0p2ptv7D9hBch";
+    this.token2 = "rAFk3RfO94NyVncAT9pYdeej0NGnC7U0jWqJtMOu9WwI7V2AKEQ7NDzFrGt";
+  }
+
+  uploadData(data, onSuccess, onFailure) {
+    return fetch(
+      this.urlApi + crypto.randomUUID().toString() + ".json",
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: "Bearer " + "github_pat_" + this.token1 + "_" + this.token2
+        },
+        body: JSON.stringify({
+          message: "Data uploaded from API",
+          content: btoa(data)
+        })
       }
     ).then((res) => {
       console.log("Upload status: " + res.statusText);
@@ -101,7 +139,8 @@ class ChromeStorageManager {
   let videoPlayer;
   let videoURL;
   let lastID = -1;
-  const dataUploader = new DataUploader();
+  const dataUploader = new DataUploaderAPI();
+  //const dataUploader = new DataUploaderGithub();
   const playerManager = new PlayerManager();
   const chromeStorage = new ChromeStorageManager();
 
