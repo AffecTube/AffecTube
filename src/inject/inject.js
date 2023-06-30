@@ -3,7 +3,7 @@ class DataUploader {
     this.urlApi = "https://labelling-api.affectivese.org/LabelingEmotionsDatabase/";
   }
 
-  uploadData(data, onUploaded) {
+  uploadData(data, onSuccess, onFailure) {
     return fetch(
       this.urlApi + crypto.randomUUID().toString() + ".json",
       {
@@ -16,8 +16,17 @@ class DataUploader {
       }
     ).then((res) => {
       console.log("Upload status: " + res.statusText);
-      if (res.ok)
-        onUploaded();
+      if (res.ok) {
+        onSuccess.forEach((onSuccessCallback) => {
+          onSuccessCallback();
+        });
+      }
+      else
+      {
+        onFailure.forEach((onFailureCallback) => {
+          onFailureCallback();
+        });
+      }
     });
   }
 }
@@ -143,7 +152,11 @@ class ChromeStorageManager {
     const url = {"videoURL" : videoURL}
     const merged = {...url, ...nickname, ...labels}
 
-    dataUploader.uploadData(JSON.stringify(merged), () => chrome.storage.sync.remove([videoURL]));
+    dataUploader.uploadData(
+      JSON.stringify(merged),
+      [() => chrome.storage.sync.remove([videoURL]), () => alert("The data has been successfully uploaded")],
+      [() => alert("Something went wrong...")]
+    );
   }
 
   function initialize(newVideoURL) {
