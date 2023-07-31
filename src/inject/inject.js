@@ -135,28 +135,28 @@ class ChromeStorageManager {
 
 (() => {
   let emotions = ["happiness", "sadness", "disgust", "fear", "surprise", "anger", "confusion"];
+  let emotionsButtonStates = Array.apply(null, Array(emotions.length)).map(e => -1);
   let savedLabels = [];
   let videoPlayer;
   let videoURL;
-  let lastID = -1;
+
   const dataUploader = new DataUploaderAPI();
   //const dataUploader = new DataUploaderGithub();
   const playerManager = new PlayerManager();
   const chromeStorage = new ChromeStorageManager();
 
-
+  
   async function addNewLabelClicked(event) {
     savedLabels = await chromeStorage.syncLabels(videoURL);
+    var emotionID = emotions.findIndex(e => e == event.srcElement.id);
+
     var lastGlobalIDObj = await chromeStorage.getStorageData2('lastGlobalID');
     var lastGlobalID = lastGlobalIDObj.lastGlobalID;
     if (!lastGlobalID)
       lastGlobalID = 0;
 
-    if (lastGlobalID != lastID) {
-      document.getElementById("emotionButtonsContainer").setAttribute("hidden", "");
-      document.getElementById("stopButtonsContainer").removeAttribute("hidden");
-      var index = emotions.findIndex(e => e == event.srcElement.id) * 98;
-      document.getElementById("stopButton").style.marginLeft = index.toString() + "px";
+    if (emotionsButtonStates[emotionID] == -1) {
+      event.target.style.backgroundColor = "#780c0c";
 
       lastGlobalID++;
       await chromeStorage.setStorageData({'lastGlobalID' : lastGlobalID});
@@ -169,18 +169,17 @@ class ChromeStorageManager {
       };
 
       chrome.storage.sync.set({[videoURL]: JSON.stringify([...savedLabels, newLabel].sort((a, b) => a.startTime - b.startTime))});
-      lastID = lastGlobalID;
+      emotionsButtonStates[emotionID] = lastGlobalID;
     }
     else {
-      document.getElementById("emotionButtonsContainer").removeAttribute("hidden");
-      document.getElementById("stopButtonsContainer").setAttribute("hidden", "");
+      event.target.style.backgroundColor = "#5c5a59";
 
-      var obj = savedLabels.find(e => e.id == lastID);
+      var obj = savedLabels.find(e => e.id == emotionsButtonStates[emotionID]);
       if (obj) {
         obj.endTime = videoPlayer.currentTime.toFixed(2),
         chrome.storage.sync.set({[videoURL]: JSON.stringify([...savedLabels].sort((a, b) => a.startTime - b.startTime))});
       }
-      lastID = -1;
+      emotionsButtonStates[emotionID] = -1;
     }
   }
 
@@ -199,24 +198,20 @@ class ChromeStorageManager {
   }
 
   function initialize(newVideoURL) {
+    savedLabels = chromeStorage.syncLabels(newVideoURL);
+
     videoURL = newVideoURL;
     videoPlayer = playerManager.getVideoPlayer();
     var buttonsContainer = playerManager.getEmotionsContainer();
     var emotionButton = document.getElementsByClassName("emotionButton")[0];
 
     if (!emotionButton && buttonsContainer) {
-      var buttonsToStyle = [];
       var emotionButtonsContainer = document.createElement("div");
       emotionButtonsContainer.className = "emotionButtonsContainer";
       emotionButtonsContainer.id = "emotionButtonsContainer";
       emotionButtonsContainer.removeAttribute("hidden");
       emotionButtonsContainer.style.marginRight = "0px";
       buttonsContainer.appendChild(emotionButtonsContainer);
-      var stopButtonsContainer = document.createElement("div");
-      stopButtonsContainer.className = "stopButtonsContainer";
-      stopButtonsContainer.id = "stopButtonsContainer";
-      stopButtonsContainer.setAttribute("hidden", "");
-      buttonsContainer.appendChild(stopButtonsContainer);
 
       for (let i = 0; i < emotions.length; i++) {
         var emotionButton = document.createElement("button");
@@ -226,86 +221,86 @@ class ChromeStorageManager {
         emotionButton.id = emotions[i];
         emotionButton.addEventListener("click", addNewLabelClicked);
 
-        buttonsToStyle.push(emotionButton);
+        emotionButton.style.backgroundColor = "#5c5a59";
+        emotionButton.style.border = "none";
+        emotionButton.style.color = "white";
+        emotionButton.style.padding = "10px 10px";
+        emotionButton.style.textAlign = "center";
+        emotionButton.style.textDecoration = "none";
+        emotionButton.style.display = "inline-block";
+        emotionButton.style.fontSize = "16px";
+        emotionButton.style.borderRadius = "4px";
+        emotionButton.style.cursor = "pointer";
+        emotionButton.style.width = "96px";
+        emotionButton.style.height = "32px";
+        emotionButton.style.marginLeft = "2px";
+        emotionButton.style.lineHeight = "16px";
+
         emotionButtonsContainer.appendChild(emotionButton);
-      }
-
-      var stopButton = document.createElement("button");
-      stopButton.innerHTML = "stop";
-      stopButton.className = "stopButton";
-      stopButton.id = "stopButton";
-      stopButton.addEventListener("click", addNewLabelClicked);
-      buttonsToStyle.push(stopButton);
-      stopButtonsContainer.appendChild(stopButton);
-
-      for (let i = 0; i < buttonsToStyle.length; i++) {
-        var button = buttonsToStyle[i];
-        button.style.backgroundColor = "#5c5a59";
-        button.style.border = "none";
-        button.style.color = "white";
-        button.style.padding = "10px 10px";
-        button.style.textAlign = "center";
-        button.style.textDecoration = "none";
-        button.style.display = "inline-block";
-        button.style.fontSize = "16px";
-        button.style.borderRadius = "4px";
-        button.style.cursor = "pointer";
-        button.style.width = "96px";
-        button.style.height = "32px";
-        button.style.marginLeft = "2px";
-        button.style.lineHeight = "16px";
       }
     }
   }
 
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    switch (obj.type) {
-      case "init":
-        //chromeStorage.resetStorage();
-        initialize(obj.videoURL);
-        break;
-      case "updateStartTime":
-        var objToUpdate = savedLabels.find(e => e.id == obj.value);
-        if (objToUpdate) {
-          objToUpdate.startTime = obj.time;
-          chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
-        }
-        break;
-      case "updateEndTime":
-        var objToUpdate = savedLabels.find(e => e.id == obj.value);
-        if (objToUpdate) {
-          objToUpdate.endTime = obj.time;
-          chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
-        }
-        break;
-      case "syncStartTime":
-        var objToUpdate = savedLabels.find(e => e.id == obj.value);
-        if (objToUpdate) {
-          objToUpdate.startTime = videoPlayer.currentTime.toFixed(2);
+    (async () => {
+      if (obj.type != "init")
+        savedLabels = await chromeStorage.syncLabels(videoURL);
+
+      switch (obj.type) {
+        case "init":
+          //chromeStorage.resetStorage();
+          initialize(obj.videoURL);
+          response();
+          break;
+        case "updateStartTime":
+          var objToUpdate = savedLabels.find(e => e.id == obj.value);
+          if (objToUpdate) {
+            objToUpdate.startTime = obj.time;
+            chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
+          }
+          response();
+          break;
+        case "updateEndTime":
+          var objToUpdate = savedLabels.find(e => e.id == obj.value);
+          if (objToUpdate) {
+            objToUpdate.endTime = obj.time;
+            chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
+          }
+          response();
+          break;
+        case "syncStartTime":
+          var objToUpdate = savedLabels.find(e => e.id == obj.value);
+          if (objToUpdate) {
+            objToUpdate.startTime = videoPlayer.currentTime.toFixed(2);
+            chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
+          }
+          response(savedLabels);
+          break;
+        case "syncEndTime":
+          var objToUpdate = savedLabels.find(e => e.id == obj.value);
+          if (objToUpdate) {
+            objToUpdate.endTime = videoPlayer.currentTime.toFixed(2);
+            chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
+          }
+          response(savedLabels);
+          break;
+        case "rewindPlayer":
+          videoPlayer.currentTime = obj.time;
+          response();
+          break;
+        case "delete":
+          savedLabels = savedLabels.filter((b) => b.id != obj.value);
           chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
           response(savedLabels);
-        }
-        break;
-      case "syncEndTime":
-        var objToUpdate = savedLabels.find(e => e.id == obj.value);
-        if (objToUpdate) {
-          objToUpdate.endTime = videoPlayer.currentTime.toFixed(2);
-          chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
-          response(savedLabels);
-        }
-        break;
-      case "rewindPlayer":
-        videoPlayer.currentTime = obj.time;
-        break;
-      case "delete":
-        savedLabels = savedLabels.filter((b) => b.id != obj.value);
-        chrome.storage.sync.set({[videoURL]: JSON.stringify(savedLabels)});
-        response(savedLabels);
-        break;
-      case "upload":
-        upload();
-        break;
-    }
+          break;
+        case "upload":
+          upload();
+          response();
+          break;
+      }
+    })();
+
+    return true;
   });
 })();
   

@@ -62,6 +62,11 @@ async function addLabel(table, labelObj) {
   });
   endTimeCell.appendChild(endTimeInput);
 
+  if (Number(labelObj.endTime) < Number(labelObj.startTime)) {
+    startTimeInput.style.backgroundColor = "red";
+    endTimeInput.style.backgroundColor = "red";
+  }
+
   const endTimeSyncButton = document.createElement("img");
   endTimeSyncButton.src = "../.././assets/sync.png";
   endTimeSyncButton.addEventListener("click", updateEndTimeToCurrent);
@@ -107,7 +112,6 @@ async function updateStartTimeToCurrent(inputObj) {
   chrome.tabs.sendMessage(tab.id, {
     type: "syncStartTime",
     value: id
-  //});
   }, showPopup);
 }
 
@@ -118,7 +122,6 @@ async function updateEndTimeToCurrent(inputObj) {
   chrome.tabs.sendMessage(tab.id, {
     type: "syncEndTime",
     value: id
-  //});
   }, showPopup);
 }
 
